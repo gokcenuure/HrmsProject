@@ -6,22 +6,41 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.kodlamaio.hrms.business.abstracts.JobService;
-
+import com.kodlamaio.hrms.core.utilities.results.DataResult;
+import com.kodlamaio.hrms.core.utilities.results.ErrorResult;
+import com.kodlamaio.hrms.core.utilities.results.Result;
+import com.kodlamaio.hrms.core.utilities.results.SuccessDataResult;
+import com.kodlamaio.hrms.core.utilities.results.SuccessResult;
 import com.kodlamaio.hrms.dataAccess.abstracts.JobDao;
 import com.kodlamaio.hrms.entities.concretes.Job;
 @Service
 public class JobManager implements JobService{
 
 	
+	
 	private JobDao jobDao;
+	
 	@Autowired
 	public JobManager(JobDao jobDao) {
 		super();
 		this.jobDao=jobDao;
 	}
 	@Override
-	public List<Job> getAll() {
+	public DataResult<List<Job>> getAll() {
 		
-		return this.jobDao.findAll();
+		return new SuccessDataResult<> (jobDao.findAll(),"Success");
 	}
+	@Override
+    public Result add(Job job) {
+
+        try {
+            jobDao.save(job);
+            return new SuccessResult("İş kaydedildi");
+        } catch (Exception exception){
+            exception.printStackTrace();
+            return new ErrorResult("Kaydedilemedi");
+        }
+
+    }
+
 }
